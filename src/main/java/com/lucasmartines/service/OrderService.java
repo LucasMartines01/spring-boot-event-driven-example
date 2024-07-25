@@ -4,8 +4,10 @@ import com.lucasmartines.dto.OrderRequestDTO;
 import com.lucasmartines.entities.Order;
 import com.lucasmartines.event.OrderCreatedEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.threads.VirtualThreadExecutor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 
@@ -15,7 +17,6 @@ public class OrderService {
     private ApplicationEventPublisher eventPublisher;
 
 
-
     public OrderService(ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
@@ -23,14 +24,15 @@ public class OrderService {
     public void createOrder(OrderRequestDTO dto) {
         Order order = new Order();
         BeanUtils.copyProperties(dto, order);
-        // Save order in database or send to another service
+        try (VirtualThreadExecutor executor = new VirtualThreadExecutor("OrderService")) {
+            executor.execute(() -> eventPublisher.publishEvent(
+                    new OrderCreatedEvent(
+                            this, order.getEmail(),
+                            "Order created successfully"
+                    )
+            ));
+        }
 
-        eventPublisher.publishEvent(
-                new OrderCreatedEvent(
-                        this, order.getEmail(),
-                        "Order created successfully"
-                )
-        );
 
         log.info("Order created: {}", order);
     }

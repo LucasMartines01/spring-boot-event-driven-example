@@ -11,10 +11,15 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class NotificationService {
 
-    @Async
+
     @EventListener
+    @Async
     public void sendEmail(OrderCreatedEvent event) {
-        // Send email to the user
-        log.info("Email sent to: {}", event.getEmail());
+        try {
+            Thread.sleep(5000);
+            log.info("Email sent to: {}", event.getEmail());
+        } catch (InterruptedException e) {
+            log.error("Error sending email", e);
+        }
     }
 }
