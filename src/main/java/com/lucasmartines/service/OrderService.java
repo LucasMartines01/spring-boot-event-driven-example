@@ -23,14 +23,15 @@ public class OrderService {
     public void createOrder(OrderRequestDTO dto) {
         Order order = new Order();
         BeanUtils.copyProperties(dto, order);
-        try (VirtualThreadExecutor executor = new VirtualThreadExecutor("OrderService")) {
-            executor.execute(() -> eventPublisher.publishEvent(
+
+          eventPublisher.publishEvent(
                     new OrderCreatedEvent(
                             this, order.getEmail(),
                             "Order created successfully"
                     )
-            ));
-        }
+          );
+
+
 
 
         log.info("Order created: {}", order);
