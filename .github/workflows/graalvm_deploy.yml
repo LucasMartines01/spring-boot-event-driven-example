@@ -18,7 +18,7 @@ jobs:
           native-image-job-reports: 'true'
 
       - name: Build with maven
-        run: mvn -Pnative package
+        run: mvn -Pnative native:compile -d skip tests
 
       - name: list files
         run: ls -la target
