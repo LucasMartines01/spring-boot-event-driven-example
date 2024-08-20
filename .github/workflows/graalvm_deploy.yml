@@ -33,3 +33,19 @@ jobs:
         with:
           name: example-${{ matrix.os }}
           path: target/event-application-example
+
+
+  deploy:
+    name: Deploy GraalVM Native Image
+    runs-on: ubuntu-20.04
+    needs: build
+    steps:
+      - name: Deploy to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/event-application-example:latest
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
