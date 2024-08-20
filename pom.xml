@@ -64,7 +64,6 @@
             <plugin>
                 <groupId>org.graalvm.buildtools</groupId>
                 <artifactId>native-maven-plugin</artifactId>
-                <version>0.9.27</version>
             </plugin>
         </plugins>
     </build>
