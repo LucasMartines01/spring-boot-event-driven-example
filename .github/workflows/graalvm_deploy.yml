@@ -40,6 +40,14 @@ jobs:
     runs-on: ubuntu-20.04
     needs: build
     steps:
+      - name: Download native image
+        uses: actions/download-artifact@v4
+        with:
+          name: example-ubuntu-20.04
+
+      - name: list all files
+        run: ls -la
+
       - name: Deploy to Docker Hub
         uses: docker/build-push-action@v2
         with:
