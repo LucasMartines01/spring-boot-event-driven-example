@@ -4,8 +4,6 @@ import com.lucasmartines.dto.OrderRequestDTO;
 import com.lucasmartines.entities.Order;
 import com.lucasmartines.event.OrderCreatedEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.threads.VirtualThreadExecutor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class OrderService {
-    private ApplicationEventPublisher eventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     public OrderService(ApplicationEventPublisher eventPublisher) {
@@ -21,8 +19,7 @@ public class OrderService {
     }
 
     public void createOrder(OrderRequestDTO dto) {
-        Order order = new Order();
-        BeanUtils.copyProperties(dto, order);
+        Order order = new Order(dto.quantity(), dto.name(), dto.email(), dto.product());
 
           eventPublisher.publishEvent(
                     new OrderCreatedEvent(
