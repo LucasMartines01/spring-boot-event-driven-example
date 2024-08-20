@@ -20,7 +20,9 @@ jobs:
       - name: Build with maven
         run: mvn -Pnative native:compile -d skip tests
 
+
       - name: list files
+        if: runner.os != 'Windows'
         run: ls -la target
 
       - name: java version
